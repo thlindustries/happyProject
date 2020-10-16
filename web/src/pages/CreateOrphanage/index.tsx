@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useState, useRef, ChangeEvent } from 'react';
 import { Map, Marker, TileLayer } from 'react-leaflet';
 import { LeafletMouseEvent } from 'leaflet';
 import { useHistory } from 'react-router-dom';
@@ -37,6 +37,8 @@ interface CreateOrphanage {
 
 const CreateOrphanage: React.FC = () => {
   const [latlgn, setLatlgn] = useState({ lat: 0, lgn: 0 });
+  const [images, setImages] = useState<File[]>([]);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [openOnWeekends, setOpenOnWeekends] = useState(true);
 
   const { goBack, push } = useHistory();
@@ -51,6 +53,16 @@ const CreateOrphanage: React.FC = () => {
   const handleSetOpenOnWeekends = useCallback(() => {
     setOpenOnWeekends(!openOnWeekends);
   }, [openOnWeekends]);
+
+  const handleSelectImages = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const selectedImages = Array.from(e.target.files);
+    setImages(selectedImages);
+    const selectedImagesPreview = selectedImages.map((selectedImage) =>
+      URL.createObjectURL(selectedImage),
+    );
+    setPreviewImages(selectedImagesPreview);
+  }, []);
 
   const handleSubmit = useCallback(
     async (data: CreateOrphanage) => {
@@ -86,7 +98,20 @@ const CreateOrphanage: React.FC = () => {
           return;
         }
 
-        await api.post('/orphanages', data);
+        const newForm = new FormData();
+
+        newForm.append('name', data.name);
+        newForm.append('latitude', String(latlgn.lat));
+        newForm.append('longitude', String(latlgn.lgn));
+        newForm.append('about', data.about);
+        newForm.append('instructions', data.instructions);
+        newForm.append('opening_hours', data.opening_hours);
+        newForm.append('open_on_weekends', String(openOnWeekends));
+        images.forEach((image) => {
+          newForm.append('img', image);
+        });
+
+        await api.post('/orphanages', newForm);
 
         addToast({
           type: 'success',
@@ -94,7 +119,7 @@ const CreateOrphanage: React.FC = () => {
           description: 'Você já pode fazer o seu logon no GoBarber!',
         });
 
-        push('/');
+        push('/app');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -112,7 +137,7 @@ const CreateOrphanage: React.FC = () => {
         });
       }
     },
-    [addToast, push, latlgn.lat],
+    [addToast, push, latlgn, openOnWeekends, images],
   );
 
   return (
@@ -163,11 +188,21 @@ const CreateOrphanage: React.FC = () => {
             <InputBlock>
               <label htmlFor="images">Fotos</label>
 
-              <div className="uploaded-image"></div>
-
-              <AddImg>
-                <FiPlus size={24} color="#15b6d6" />
-              </AddImg>
+              <div className="images-container">
+                <AddImg htmlFor="image[]">
+                  <FiPlus size={24} color="#15b6d6" />
+                </AddImg>
+                {previewImages.map((previewImage) => (
+                  <img key={previewImage} src={previewImage} alt="a" />
+                ))}
+              </div>
+              <input
+                multiple
+                onChange={handleSelectImages}
+                style={{ display: 'none' }}
+                type="file"
+                id="image[]"
+              />
             </InputBlock>
           </fieldset>
 

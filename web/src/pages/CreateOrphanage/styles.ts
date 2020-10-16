@@ -73,7 +73,6 @@ export const InputBlock = styled.div`
     background: #f5f8fa;
     border: 1px solid #d3e2e5;
     border-radius: 20px;
-    outline: none;
     color: #5c8599;
 
     min-height: 120px;
@@ -83,25 +82,30 @@ export const InputBlock = styled.div`
     line-height: 28px;
   }
 
-  input {
-    width: 100%;
-    background: #f5f8fa;
-    border: 1px solid #d3e2e5;
-    border-radius: 20px;
-    outline: none;
-    color: #5c8599;
+  .images-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 16px;
+    grid-row-gap: 20px;
 
-    height: 64px;
-    padding: 0 16px;
+    img {
+      width: 100%;
+      height: 96px;
+      object-fit: cover;
+      border-radius: 20px;
+    }
   }
 `;
 
-export const AddImg = styled.button`
-  width: 100%;
-  height: 64px;
+export const AddImg = styled.label`
+  height: 96px;
   background: #f5f8fa;
   border: 1px dashed #96d2f0;
   border-radius: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   transition: background-color 0.4s;
   outline: none;

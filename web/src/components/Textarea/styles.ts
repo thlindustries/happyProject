@@ -55,6 +55,7 @@ export const Container = styled.div<ContainerProps>`
   textarea {
     background: transparent;
     flex: 1;
+    outline: none;
     border: 0;
 
     color: #000;

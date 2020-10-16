@@ -22,8 +22,6 @@ export const Container = styled.div<ContainerProps>`
   border: 2px solid #d3e2e5;
   color: #5c8599;
 
-  outline: none;
-
   & + div {
     margin-top: 8px;
   }
@@ -52,6 +50,8 @@ export const Container = styled.div<ContainerProps>`
     background: transparent;
     flex: 1;
     border: 0;
+    outline: none;
+    height: 64px;
 
     color: #000;
     &::placeholder {

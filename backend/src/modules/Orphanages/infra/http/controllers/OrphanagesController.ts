@@ -39,9 +39,15 @@ class OrphanagesController {
 
     // eslint-disable-next-line
     const files = req.files as Express.Multer.File[];
-    const fileNames = files.map(item => {
-      return { path: item.filename };
-    });
+    let fileNames;
+
+    if (files) {
+      fileNames = files.map(item => {
+        return { path: item.filename };
+      });
+    } else {
+      throw new AppError('Parece que não recebemos nenhuma imagem do orfanato');
+    }
 
     const orphanage = await createOrphanageService.execute({
       name,

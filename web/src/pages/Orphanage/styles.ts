@@ -34,6 +34,7 @@ export const ImagesContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   column-gap: 16px;
+  grid-row-gap: 20px;
 
   margin: 16px 40px 0;
 
