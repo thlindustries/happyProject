@@ -20,6 +20,12 @@ export const MainContainer = styled.main`
 
     overflow: hidden;
 
+    .leaflet-container {
+      margin-bottom: 40px;
+      border: 1px solid #d3e2e5;
+      border-radius: 20px;
+    }
+
     fieldset {
       border: 0;
 
@@ -44,7 +50,7 @@ export const MainContainer = styled.main`
 `;
 
 export const InputBlock = styled.div`
-  & + .input-block {
+  & + div {
     margin-top: 24px;
   }
 

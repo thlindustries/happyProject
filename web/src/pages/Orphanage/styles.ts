@@ -1,4 +1,8 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+interface OpenOnWeekEndsContainerProps {
+  open: boolean;
+}
 
 export const Container = styled.div`
   display: flex;
@@ -48,10 +52,16 @@ export const ImagesContainer = styled.div`
 
     opacity: 0.6;
 
+    transition: opacity 0.4s;
+
     img {
       width: 100%;
       height: 88px;
       object-fit: cover;
+    }
+
+    &:hover {
+      opacity: 1;
     }
   }
   .active {
@@ -163,10 +173,32 @@ export const OpenDetailsContainer = styled.div`
     border: 1px solid #b3dae2;
     color: #5c8599;
   }
+`;
 
-  .open-on-weekends {
-    background: linear-gradient(154.16deg, #edfff6 7.85%, #ffffff 91.03%);
-    border: 1px solid #a1e9c5;
-    color: #37c77f;
-  }
+export const OpenOnWeekEndsContainer = styled.div<OpenOnWeekEndsContainerProps>`
+  background: linear-gradient(154.16deg, #edfff6 7.85%, #ffffff 91.03%);
+  border: 1px solid #a1e9c5;
+  color: #37c77f;
+
+  ${(props) =>
+    props.open
+      ? css`
+          background: linear-gradient(154.16deg, #edfff6 7.85%, #ffffff 91.03%);
+          border: 1px solid #a1e9c5;
+          color: #37c77f;
+        `
+      : css`
+          background: linear-gradient(154.16deg, #ffeded 7.85%, #ffffff 91.03%);
+          border: 1px solid #e9a1a1;
+          color: #c73737;
+        `}
+`;
+
+export const ErrorContainer = styled.div`
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

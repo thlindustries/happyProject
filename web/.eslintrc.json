@@ -25,6 +25,8 @@
     "prettier"
   ],
   "rules": {
+    "react/jsx-props-no-spreading": "off",
+    "@typescript-eslint/ban-types": "off",
     "jsx-a11y/label-has-associated-control": "off",
     "react/jsx-one-expression-per-line": "off",
     "no-use-before-define": "off",
