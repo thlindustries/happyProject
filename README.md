@@ -46,7 +46,9 @@ O layout **mobile** da aplicação está disponível no Figma:
   <img alt="Happy" title="#Happy" src="https://i.imgur.com/j9lNHGJ.jpg" width="220px">
   <img alt="Happy" title="#Happy" src="https://i.imgur.com/T4Usybf.jpg" width="220px">
   <img alt="Happy" title="#Happy" src="https://i.imgur.com/ddbg85G.jpg" width="220px">
-  <img alt="Happy" title="#Happy" src="https://i.imgur.com/fzrCM3Y.gif" width="280px">
+  <h1>Veja uma demonstração em <strong>GIF</strong> neste 
+    <a href="https://i.imgur.com/fzrCM3Y.gif">Link</a>
+  </h1>
 </p>
 
 ## 🎨 Layout
