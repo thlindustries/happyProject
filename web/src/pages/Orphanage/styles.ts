@@ -117,6 +117,7 @@ export const OrphanageDetailsContent = styled.div`
     align-items: center;
 
     transition: background-color 0.2s;
+    outline: none;
 
     svg {
       margin-right: 16px;

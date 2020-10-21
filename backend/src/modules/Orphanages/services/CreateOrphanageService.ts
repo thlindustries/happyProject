@@ -26,6 +26,7 @@ class CreateOrphanageService {
     instructions,
     opening_hours,
     open_on_weekends,
+    whatsapp = '',
     images = [{ path: '' }],
   }: ICreateOrphanageDTO): Promise<Orphanage> {
     const checkIfOrphanageExists = await this.orphanageRepositgory.findByName(
@@ -48,6 +49,7 @@ class CreateOrphanageService {
       instructions,
       opening_hours,
       open_on_weekends,
+      whatsapp,
       images: archiveName,
     });
 

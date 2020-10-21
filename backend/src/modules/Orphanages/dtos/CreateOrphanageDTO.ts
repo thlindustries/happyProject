@@ -6,5 +6,6 @@ export default interface CreateOrphanageDTO {
   instructions: string;
   opening_hours: string;
   open_on_weekends: boolean;
+  whatsapp?: string;
   images?: { path: string }[];
 }

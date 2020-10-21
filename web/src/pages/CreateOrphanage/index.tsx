@@ -33,6 +33,7 @@ interface CreateOrphanage {
   about: string;
   instructions: string;
   opening_hours: string;
+  whatsapp: string;
 }
 
 const CreateOrphanage: React.FC = () => {
@@ -82,6 +83,7 @@ const CreateOrphanage: React.FC = () => {
           opening_hours: Yup.string().required(
             'Digite o horário de funcionamento do orfanato',
           ),
+          whatsapp: Yup.string(),
         });
 
         await schema.validate(data, {
@@ -107,6 +109,7 @@ const CreateOrphanage: React.FC = () => {
         newForm.append('instructions', data.instructions);
         newForm.append('opening_hours', data.opening_hours);
         newForm.append('open_on_weekends', String(openOnWeekends));
+        newForm.append('whatsapp', data.whatsapp);
         images.forEach((image) => {
           newForm.append('img', image);
         });
@@ -176,6 +179,11 @@ const CreateOrphanage: React.FC = () => {
             <InputBlock>
               <label htmlFor="name">Nome</label>
               <Input id="name" name="name" />
+            </InputBlock>
+
+            <InputBlock>
+              <label htmlFor="whatsapp">Whatsapp</label>
+              <Input id="whatsapp" name="whatsapp" />
             </InputBlock>
 
             <InputBlock>

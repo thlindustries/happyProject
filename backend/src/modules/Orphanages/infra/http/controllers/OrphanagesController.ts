@@ -33,6 +33,8 @@ class OrphanagesController {
       instructions,
       opening_hours,
       open_on_weekends,
+      whatsapp = '',
+      images = '',
     } = req.body as RequestDTO;
 
     const createOrphanageService = container.resolve(CreateOrphanageService);
@@ -57,6 +59,7 @@ class OrphanagesController {
       instructions,
       opening_hours,
       open_on_weekends,
+      whatsapp,
       images: fileNames,
     });
 

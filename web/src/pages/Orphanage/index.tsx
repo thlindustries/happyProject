@@ -48,6 +48,12 @@ const Orphanage: React.FC = () => {
     setPrincipalImg(image);
   }, []);
 
+  const handleOpenWhatsApp = useCallback(() => {
+    if (!orphanage) return;
+
+    window.location.href = `https://wa.me/55${orphanage.whatsapp}?text=Eu%20tenho%20interesse%20no%20seu%20carro%20à%20venda`;
+  }, [orphanage]);
+
   useEffect(() => {
     api.get<OrphanageModel>(`/orphanages/${id}`).then((response) => {
       setOrphanage(response.data);
@@ -149,7 +155,11 @@ const Orphanage: React.FC = () => {
               </OpenOnWeekEndsContainer>
             </OpenDetailsContainer>
 
-            <button type="button" className="contact-button">
+            <button
+              type="button"
+              className="contact-button"
+              onClick={handleOpenWhatsApp}
+            >
               <FaWhatsapp size={20} color="#FFF" />
               Entrar em contato
             </button>
