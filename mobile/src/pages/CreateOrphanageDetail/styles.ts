@@ -1,8 +1,21 @@
 import styled from 'styled-components/native';
+import { TouchableOpacity } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 
 export const Container = styled.ScrollView`
   flex: 1;
+`;
+
+export const UploadedImagesContainer = styled.View`
+  flex-direction: row;
+`;
+
+export const UploadedImage = styled.Image`
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  margin-bottom: 32px;
+  margin-right: 8px;
 `;
 
 export const TitleLabel = styled.Text`
@@ -21,11 +34,11 @@ export const Label = styled.Text`
   margin-bottom: 8px;
 `;
 
-export const AddButton = styled(RectButton)`
+export const AddButton = styled(TouchableOpacity)`
   background: rgba(255, 255, 255, 0.5);
-  border-style: dashed;
   border: solid 1.4px #96d2f0;
   border-radius: 20px;
+  border-style: dashed;
   height: 56px;
   justify-content: center;
   align-items: center;

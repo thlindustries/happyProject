@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 import api from '../../services/api';
 import OrphanageInterface from '../../models/Orphanage';
@@ -10,7 +10,6 @@ import {
   MapContainer,
   CalloutContainer,
   CalloutText,
-  Message,
 } from './styles';
 import Footer from '../../components/Footer';
 
@@ -29,11 +28,11 @@ const Landing: React.FC = () => {
     navigate('CreateOrphanageMap');
   }, []);
 
-  useEffect(() => {
+  useFocusEffect(() => {
     api.get('/orphanages').then((response) => {
       setOrphanages(response.data);
     });
-  }, []);
+  });
 
   return (
     <Container>

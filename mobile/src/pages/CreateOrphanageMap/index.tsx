@@ -1,21 +1,30 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Dimensions } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, MapEvent } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 
 import { Container, NextButton, ButtonText } from './styles';
 import mapMarkerImg from '../../assets/icons/Local.png';
 
 const CreateOrphanage: React.FC = () => {
-  const [latlgn, setLatlgn] = useState({
-    lat: '-22.9324252',
-    lgn: '-47.0483394',
+  // const [latlgn, setLatlgn] = useState({
+  //   lat: '-22.9324252',
+  //   lgn: '-47.0483394',
+  // });
+  const [latlng, setLatlgn] = useState({
+    lat: 0,
+    lng: 0,
   });
 
   const { navigate } = useNavigation();
 
   const handleNextStep = useCallback(() => {
-    navigate('CreateOrphanageDetail', { latlgn });
+    navigate('CreateOrphanageDetail', { latlng });
+  }, [latlng]);
+
+  const handleSetMapPosition = useCallback((e: MapEvent) => {
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    setLatlgn({ lat: latitude, lng: longitude });
   }, []);
 
   useEffect(() => {
@@ -26,25 +35,30 @@ const CreateOrphanage: React.FC = () => {
     <Container>
       <MapView
         initialRegion={{
-          latitude: -27.2092052,
-          longitude: -49.6401092,
-          latitudeDelta: 0.008,
-          longitudeDelta: 0.008,
+          latitude: -22.9324252,
+          longitude: -47.0483394,
+          latitudeDelta: 0.032,
+          longitudeDelta: 0.032,
         }}
         style={{
           width: Dimensions.get('window').width,
           height: Dimensions.get('window').height,
         }}
+        onPress={handleSetMapPosition}
       >
-        <Marker
-          icon={mapMarkerImg}
-          coordinate={{ latitude: -27.2092052, longitude: -49.6401092 }}
-        />
+        {latlng.lat !== 0 && (
+          <Marker
+            icon={mapMarkerImg}
+            coordinate={{ latitude: latlng.lat, longitude: latlng.lng }}
+          />
+        )}
       </MapView>
 
-      <NextButton onPress={handleNextStep}>
-        <ButtonText>Próximo</ButtonText>
-      </NextButton>
+      {latlng.lat !== 0 && (
+        <NextButton onPress={handleNextStep}>
+          <ButtonText>Próximo</ButtonText>
+        </NextButton>
+      )}
     </Container>
   );
 };

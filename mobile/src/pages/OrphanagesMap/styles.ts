@@ -27,5 +27,3 @@ export const CalloutText = styled.Text`
 
   font-family: 'Nunito_700Bold';
 `;
-
-export const Message = styled.Text``;

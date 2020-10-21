@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ScrollView, ActivityIndicator, View, Linking } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -43,6 +43,20 @@ const OrphanageDetail: React.FC = () => {
   const { params } = useRoute();
   const { id } = params as Params;
 
+  const handleNavigateToGoogleMap = useCallback(() => {
+    Linking.openURL(
+      `https://www.google.com/maps/dir/?api=1&destination=${Number(
+        latlng.lat,
+      )},${Number(latlng.lng)}`,
+    );
+  }, [latlng]);
+
+  const handleLinkToWhatsapp = useCallback(() => {
+    Linking.openURL(
+      `whatsapp://send?text=Salve mano, de boa?!&phone=+55${orphanage.whatsapp}`,
+    );
+  }, [orphanage]);
+
   useEffect(() => {
     api.get<OrphanageInterface>(`/orphanages/${id}`).then((response) => {
       const { data } = response;
@@ -52,7 +66,15 @@ const OrphanageDetail: React.FC = () => {
 
       setLatlng({ lat: Number(latitude), lng: Number(longitude) });
     });
-  }, []);
+  }, [id]);
+
+  if (!orphanage.id) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator color="#c3c3c3" size={50} />
+      </View>
+    );
+  }
 
   return (
     <Container>
@@ -63,7 +85,6 @@ const OrphanageDetail: React.FC = () => {
               if (!image.url) {
                 return false;
               }
-              console.log(image.url);
               return (
                 <StyledImage
                   key={image.id}
@@ -108,7 +129,7 @@ const OrphanageDetail: React.FC = () => {
             />
           </MapView>
 
-          <RoutesContainer>
+          <RoutesContainer onPress={handleNavigateToGoogleMap}>
             <RoutesContainerText>Ver rotas no Google Maps</RoutesContainerText>
           </RoutesContainer>
         </MapContainer>
@@ -123,7 +144,7 @@ const OrphanageDetail: React.FC = () => {
         <ScheduleContainer>
           <ScheduleItemBlue>
             <Feather name="clock" size={40} color="#2AB5D1" />
-            <ShcheduleTextBlue>{orphanage.opening_hours}</ShcheduleTextBlue>
+            <ShcheduleTextBlue>{`Segunda à sexta ${orphanage.opening_hours}`}</ShcheduleTextBlue>
           </ScheduleItemBlue>
           <SheduleItemOpen open={!!orphanage.open_on_weekends}>
             <Feather
@@ -131,7 +152,7 @@ const OrphanageDetail: React.FC = () => {
               size={40}
               color={orphanage.open_on_weekends ? '#39cc83' : '#cc3939'}
             />
-            <ShcheduleTextOpen open={orphanage.open_on_weekends}>
+            <ShcheduleTextOpen open={!!orphanage.open_on_weekends}>
               {orphanage.open_on_weekends
                 ? 'Abrimos nos finais de semana'
                 : 'Não abrimos nos finais de semana'}
@@ -139,9 +160,17 @@ const OrphanageDetail: React.FC = () => {
           </SheduleItemOpen>
         </ScheduleContainer>
 
-        <ContactButton onPress={() => { }}>
+        <ContactButton
+          onPress={handleLinkToWhatsapp}
+          hasContact={orphanage.whatsapp !== ''}
+          enabled={orphanage.whatsapp !== ''}
+        >
           <FontAwesome name="whatsapp" size={24} color="#FFF" />
-          <ContactButtonText>Entrar em contato</ContactButtonText>
+          <ContactButtonText>
+            {orphanage.whatsapp !== ''
+              ? `Entrar em contado`
+              : `Contato indisponível`}
+          </ContactButtonText>
         </ContactButton>
       </DetailsContainer>
     </Container>

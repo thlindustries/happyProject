@@ -19,7 +19,7 @@ const Landing: React.FC = () => {
   useEffect(() => {
     setTimeout(() => {
       navigate('OrphanagesMap');
-    }, 5000);
+    }, 3000);
   }, []);
 
   return (

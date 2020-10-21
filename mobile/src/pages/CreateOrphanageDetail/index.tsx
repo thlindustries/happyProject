@@ -1,17 +1,22 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { TextInput, Alert } from 'react-native';
+import { Alert, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
+import Axios from 'axios';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import {
   Container,
+  UploadedImagesContainer,
+  UploadedImage,
   TitleLabel,
   Label,
   AddButton,
@@ -27,78 +32,127 @@ interface CreateOrphanage {
   about: string;
   whatsapp: string;
   instructions: string;
-  openning_hours: string;
+  opening_hours: string;
+}
+
+interface Position {
+  latlng: {
+    lat: number;
+    lng: number;
+  };
 }
 
 const CreateOrphanageDetail: React.FC = () => {
-  const { params } = useRoute();
-
   const [switchValue, setSwitchValue] = useState(true);
-  const orphanageNameInputRef = useRef<TextInput>(null);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [position, setPosition] = useState({ lat: 0, lng: 0 });
+  const [images, setImages] = useState<string[]>([]);
+
+  const { params } = useRoute();
+  const navigation = useNavigation();
 
   const formRef = useRef<FormHandles>(null);
 
-  const navigation = useNavigation();
+  const handleSelectImages = useCallback(async () => {
+    const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
 
-  useEffect(() => {
-    console.log(params);
-  }, []);
+    if (status !== 'granted') {
+      Alert.alert('Eita, precisamos de acesso à sua galeria');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    });
 
-  const handleSubmit = useCallback(async (data: CreateOrphanage) => {
-    if (!formRef.current) {
+    if (result.cancelled) {
       return;
     }
 
-    // console.log(api.defaults.baseURL);
+    const { uri: img } = result;
 
-    try {
-      formRef.current.setErrors({});
+    setImages([...images, img]);
+  }, [images]);
 
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome do orfanato é obrigatório'),
-        about: Yup.string().required(
-          'Digite alguma informação sobre o orfanato',
-        ),
-        whatsapp: Yup.string()
-          .required('Whatsapp obrigatório')
-          .max(12, 'Número inválido'),
-        instructions: Yup.string().required(
-          'Instruções de visitação obrigatórias',
-        ),
-        opening_hours: Yup.string().required(
-          'Horário de funcionamento obrigatório',
-        ),
-      });
+  useEffect(() => {
+    const { latlng } = params as Position;
+    setPosition({ lat: latlng.lat, lng: latlng.lng });
+  }, [params]);
 
-      await schema.validate(data, {
-        abortEarly: false,
-      });
-
-      console.log(data);
-      // await api.post('/usuarios', data);
-
-      Alert.alert(
-        'Cadastro realizado!',
-        'Você já pode fazer o seu login na aplicação!',
-      );
-
-      // navigation.goBack();
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
-
-        formRef.current.setErrors(errors);
+  const handleSubmit = useCallback(
+    async (data: CreateOrphanage) => {
+      if (!formRef.current) {
         return;
       }
 
-      Alert.alert(
-        'Erro no cadastro',
-        'Ocorreu um erro ao cadastrar, tente novamente!',
-      );
-    }
+      // console.log(api.defaults.baseURL);
 
-    console.log('submit');
-  }, []);
+      try {
+        formRef.current.setErrors({});
+
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Nome do orfanato é obrigatório'),
+          about: Yup.string().required(
+            'Digite alguma informação sobre o orfanato',
+          ),
+          whatsapp: Yup.string()
+            .required('Whatsapp obrigatório')
+            .max(12, 'Número inválido'),
+          instructions: Yup.string().required(
+            'Instruções de visitação obrigatórias',
+          ),
+          opening_hours: Yup.string().required(
+            'Horário de funcionamento obrigatório',
+          ),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        const newForm = new FormData();
+
+        newForm.append('name', data.name);
+        newForm.append('about', data.about);
+        newForm.append('latitude', String(position.lat));
+        newForm.append('longitude', String(position.lng));
+        newForm.append('instructions', data.instructions);
+        newForm.append('whatsapp', data.whatsapp);
+        newForm.append('opening_hours', data.opening_hours);
+        newForm.append('open_on_weekends', String(switchValue));
+
+        images.forEach((image, index) => {
+          newForm.append('img', {
+            name: `image_${index}.jpg`,
+            type: 'image/jpg',
+            uri: image,
+          } as any);
+        });
+
+        await api.post('/orphanages', newForm);
+
+        Alert.alert('Cadastro realizado!');
+
+        navigation.navigate('OrphanagesMap');
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+
+          formRef.current.setErrors(errors);
+          console.log(err);
+          return;
+        }
+
+        console.log(err);
+        Alert.alert(
+          'Erro no cadastro',
+          'Ocorreu um erro ao cadastrar, tente novamente!',
+        );
+      }
+    },
+    [position, switchValue, images],
+  );
 
   const handleChangeSwitch = useCallback(() => {
     setSwitchValue(!switchValue);
@@ -140,7 +194,12 @@ const CreateOrphanageDetail: React.FC = () => {
         />
 
         <Label>Fotos</Label>
-        <AddButton onPress={() => { }}>
+        <UploadedImagesContainer>
+          {images.map((image) => (
+            <UploadedImage key={image} source={{ uri: image }} />
+          ))}
+        </UploadedImagesContainer>
+        <AddButton onPress={handleSelectImages}>
           <Feather name="plus" size={24} color="#15B6D6" />
         </AddButton>
 
@@ -151,7 +210,7 @@ const CreateOrphanageDetail: React.FC = () => {
           name="instructions"
           icon="alert-octagon"
           autoCapitalize="words"
-          placeholder="Instroções para visitar o orfanato"
+          placeholder="Instruções para visitar o orfanato"
           returnKeyType="next"
           multiline
           containerStyle={{ height: 110 }}
@@ -177,8 +236,15 @@ const CreateOrphanageDetail: React.FC = () => {
           />
         </SwitchContainer>
 
-        <NextButton onPress={() => formRef.current?.submitForm()}>
-          <NextButtonText>Cadastrar</NextButtonText>
+        <NextButton
+          enabled={!isRegistering}
+          onPress={() => formRef.current?.submitForm()}
+        >
+          {isRegistering ? (
+            <ActivityIndicator color="#c3c3c3" size={50} />
+          ) : (
+            <NextButtonText>Cadastrar</NextButtonText>
+          )}
         </NextButton>
       </Form>
     </Container>

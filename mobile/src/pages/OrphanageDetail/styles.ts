@@ -2,6 +2,10 @@ import { RectButton } from 'react-native-gesture-handler';
 import styled, { css } from 'styled-components/native';
 import { Dimensions } from 'react-native';
 
+interface WhatsAppProps {
+  hasContact?: boolean;
+}
+
 interface SheduleItemOpenProps {
   open: boolean;
 }
@@ -50,7 +54,7 @@ export const MapContainer = styled.View`
   background: #e6f7fb;
 `;
 
-export const RoutesContainer = styled.View`
+export const RoutesContainer = styled.TouchableOpacity`
   padding: 16px;
   align-items: center;
   justify-content: center;
@@ -139,8 +143,16 @@ export const ShcheduleTextBlue = styled.Text`
   color: #5c8599;
 `;
 
-export const ContactButton = styled(RectButton)`
-  background: #3cdc8c;
+export const ContactButton = styled(RectButton) <WhatsAppProps>`
+  ${(props) =>
+    props.hasContact
+      ? css`
+          background: #3cdc8c;
+        `
+      : css`
+          background: #dc3c3c;
+        `}
+
   border-radius: 20px;
   flex-direction: row;
   justify-content: center;

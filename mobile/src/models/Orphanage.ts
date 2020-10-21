@@ -7,7 +7,6 @@ export default interface {
   instructions: string;
   opening_hours: string;
   open_on_weekends: string;
-  images: [
-    { id: string, url: string }
-  ]
+  whatsapp: string;
+  images: Array<{ id: string, url: string }>;
 }
