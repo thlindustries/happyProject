@@ -27,6 +27,9 @@
     "prettier"
   ],
   "rules": {
+    "react/jsx-props-no-spreading": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/ban-types": "off",
     "import/no-extraneous-dependencies": "off",
     "react/style-prop-object": "off",
     "no-use-before-define": "off",
