@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img src="https://i.imgur.com/iSah0Cn.png" width="400"/>
+    <img src="https://raw.githubusercontent.com/rocketseat-education/nlw-03-omnistack/master/.github/happy.png" width="400"/>
 </h1>
 
 <h4 align="center"> 
